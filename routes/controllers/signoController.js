@@ -34,32 +34,55 @@ const updateSigno = async (req, res)=>{
     })
 }
 
-const loginCompare = async (req, res)=>{
+const CryptoJS = require('crypto-js'); // Asegúrate de tener CryptoJS para el hash de la contraseña
+const moment = require('moment-timezone'); // Para manejar la fecha y hora
+const { MongoClient } = require('mongodb'); // MongoDB client
+
+const uri = "your-mongodb-uri"; // Tu conexión a MongoDB
+const client = new MongoClient(uri);
+
+const loginCompare = async (req, res) => {
     try {
         const { username, password } = req.body;
-    
-        const usersData = await fs.readFile(path.join(__dirname, '../../db/users.json'), 'utf8');
-        const users = JSON.parse(usersData).users;
-    
-        const adminsData = await fs.readFile(path.join(__dirname, '../../db/admins.json'), 'utf8');
-        const admins = JSON.parse(adminsData).admins;
-    
-        const admin = admins.find(admin => admin.username === username && admin.password === password);
+
+        // Conexión a la base de datos MongoDB
+        await client.connect();
+        const db = client.db('horoscopo');
+        const usersCollection = db.collection('users');
+        const adminsCollection = db.collection('admins');
+
+        // Hashear la contraseña
+        const hashedPassword = CryptoJS.SHA256(password, process.env.CODE_SECRET_DATA).toString();
+
+        // Buscar al administrador
+        const admin = await adminsCollection.findOne({ username, password: hashedPassword });
         if (admin) {
-            return res.json({ status: 'Admin'});
+            // Almacenar log de inicio de sesión del admin
+            const currentDateTime = moment().tz('America/Bogota').format('YYYY-MM-DD HH:mm:ss');
+            await db.collection('user_info').insertOne({ username, role: 'Admin', date: currentDateTime });
+
+            return res.json({ status: 'Admin', user: username });
         }
-    
-        const user = users.find(user => user.username === username && user.password === password);
+
+        // Buscar al usuario
+        const user = await usersCollection.findOne({ username, password: hashedPassword });
         if (user) {
-            return res.json({ status: 'User'});
+            // Almacenar log de inicio de sesión del usuario
+            const currentDateTime = moment().tz('America/Bogota').format('YYYY-MM-DD HH:mm:ss');
+            await db.collection('user_info').insertOne({ username, role: 'User', date: currentDateTime });
+
+            return res.json({ status: 'User', user: username });
         }
-    
-        return res.status(401).json({ status: 'Error', message: 'Usuario o contraseña incorrectos'});
+
+        return res.status(401).json({ status: 'Error', message: 'Usuario o contraseña incorrectos' });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ status: 'Error', message: 'Error en el servidor'});
+        console.error('Error fetching user:', error);
+        res.status(500).json({ status: 'Error', message: 'Error en el servidor' });
+    } finally {
+        await client.close(); // Cerrar la conexión a la base de datos
     }
 };
+
 
 module.exports = {
     getAllSignos,

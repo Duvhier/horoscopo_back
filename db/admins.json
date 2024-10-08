@@ -1,0 +1,26 @@
+ {
+    "admins": [
+        {
+            "username": "admin",
+            "password": "admin2023"
+        },
+        {
+            "username": "cristhianvera",
+            "password": "vera2024"
+        },
+        {
+            "username": "cridrenteria",
+            "password": "renteria2024"
+        },
+        {
+            "username": "brandonvargas",
+            "password": "vargas2024"
+        },
+        {
+            "username": "duviertavera",
+            "password": "tavera2024"
+        }            
+    ]
+ } 
+
+

@@ -1,0 +1,28 @@
+{
+    "users": [
+        {
+            "username": "user",
+            "password": "user2023"
+        },
+        {
+            "username": "tatianamontoya",
+            "password": "montoya2024"
+        },
+        {
+            "username": "juangranja",
+            "password": "granja2024"
+        },
+        {
+            "username": "kevinrivas",
+            "password": "rivas2024"
+        },
+        {
+            "username": "luisvera",
+            "password": "vera2024"
+        },
+        {
+            "username": "manuelrendon",
+            "password": "rendon2024"
+        }
+    ]
+}

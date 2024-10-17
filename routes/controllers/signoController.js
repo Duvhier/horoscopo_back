@@ -40,7 +40,7 @@ const CryptoJS = require('crypto-js');
 const moment = require('moment-timezone');
 const { MongoClient } = require('mongodb');
 
-const uri = "horoscopo-uri";
+const uri = process.env.MONGODB_URI || "horoscopo-uri";
 const client = new MongoClient(uri);
 
 const loginCompare = async (req, res) => {

@@ -10,6 +10,10 @@ app.use(urlencoded({ extended: true }));
 app.use(json());
 app.use(cors());
 
+app.get('/', async (req, res) => {
+    res.send('Hello World!')
+})
+
 app.use('/v1/signos', router);
 
 const PORT = process.env.PORT || 4000;

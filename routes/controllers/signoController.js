@@ -1,5 +1,7 @@
 const fs = require('fs').promises;
 const path = require('path');
+const pool = require('../database/mongo')
+
 
 const getAllSignos = async (req, res)=>{
     const signo = await fs.readFile(path.join(__dirname,'../../db/signos.json'));
@@ -34,24 +36,22 @@ const updateSigno = async (req, res)=>{
     })
 }
 
-const CryptoJS = require('crypto-js'); // Asegúrate de tener CryptoJS para el hash de la contraseña
-const moment = require('moment-timezone'); // Para manejar la fecha y hora
-const { MongoClient } = require('mongodb'); // MongoDB client
+const CryptoJS = require('crypto-js'); 
+const moment = require('moment-timezone');
+const { MongoClient } = require('mongodb');
 
-const uri = "your-mongodb-uri"; // Tu conexión a MongoDB
+const uri = "horoscopo-uri";
 const client = new MongoClient(uri);
 
 const loginCompare = async (req, res) => {
     try {
         const { username, password } = req.body;
 
-        // Conexión a la base de datos MongoDB
         await client.connect();
         const db = client.db('horoscopo');
         const usersCollection = db.collection('users');
         const adminsCollection = db.collection('admins');
 
-        // Hashear la contraseña
         const hashedPassword = CryptoJS.SHA256(password, process.env.CODE_SECRET_DATA).toString();
 
         // Buscar al administrador
